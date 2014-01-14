@@ -1,0 +1,351 @@
+                                     GRADER
+
+Name of student running submit: Justin MacMillin
+Login of student running submit: aq
+
+Second team member's name: Bola Malek
+Second team member's login: aap
+
+Third team member's name (if any): Alex McGourty
+Third team member's login: cc
+
+IMPORTANT:  Once you've submitted Project 2 once, the same team member should
+submit always.  If a different teammate must submit, inform cs61b@cory.eecs of
+all the details.  Include a complete list of team members, and let us know
+which submission you want graded.
+
+If you've submitted your project once, or even written a substantial amount of
+code together, you may not change partners without the permission of the
+instructor.
+===============================================================================
+Does your program compile without errors?
+Yes.
+
+
+Have you tested your program on the machines in the Soda CS 61B lab?
+Yes.
+
+
+Did you successfully implement game tree search?  Did you successfully
+implement alpha-beta pruning?  Are there any limitations on it?  What is the
+default number of search levels set by the one-parameter MachinePlayer
+constructor?
+Yes. Our game search tree is searched by mutual recursion of the two methods 
+maxValue and minValue. The alpha-beta pruning works. It is limited by 
+the number of search depth. It unfortunately does prune fast enough for 
+a search depth of 3. I initialize the search depth to 2.
+
+
+Describe your board evaluation function in some detail.
+Our evaluation function runs on a given color. It checks that there are 
+chips in each end zone, the longest network, and the number of connections 
+for a both colors and return appropriate weighted sum based on the color 
+for which it wants to return.
+
+
+Does your MachinePlayer use any special method of choosing the first few moves?
+Yes, first my Machine player puts one in the middle and one in each end zone.
+We hard coded this into the implentation. 
+
+
+Is there anything else the graders should know to help them read your project?
+No.
+
+
+Describe the classes, modules, and interfaces you designed before and while you
+implemented the project.  Your description should include:
+  -  A list of the classes your program uses.
+  -  A list of each of the "modules" used in or by MachinePlayer, similar to
+     the list in the "Teamwork" section of the README (but hopefully more
+     detailed).
+  -  For each module, list the class(es) the module is implemented in.
+  -  For each module, say which of your team members implemented it.
+  -  For each module, describe its interface--specifically, the prototype and
+     behavior of each method that is available for external callers (outside
+     the module) to call.  Don't include methods that are only meant to be
+     called from within the module.
+
+     For each method, provide (1) a method prototype and (2) a complete,
+     unambiguous description of the behavior of the method/module.  This
+     description should also appear before the method in your code's comments.
+
+You will probably need to change some of your design decisions as you go; be
+sure to modify this file to reflect these changes before you submit your
+project.  Your design of classes and interfaces with be worth about 10% of your
+grade.
+
+
+Classes our program uses: 
+- Board.java, MachinePlayer.java, DList.java, DListNode.java
+
+
+Modules used by MachinePlayer:
+1. Making a representation of the board, Board.java, Justin
+I created a Board class that creates an 2 dimensional array object that represents
+a board.
+
+  methods:
+  /**
+   * Creates a new Board object. Each spot on the board is initially set to empty. 
+   **/
+  public Board() {}
+  
+  /**
+   * Returns the color of the chip at the given spot on the board, catches an 
+   * array index out of bounds exception if it tries to call a position
+   * (x,y) that is not on the board. 
+   * @param x position
+   * @param y position
+   * @return the integer color of the chip at the given spot. 
+   **/
+  protected int contents(int x, int y) {}
+
+  /**
+   * Adds a chip to a given position (x,y). Does not check for legality of the
+   * move because the doMove method does. 
+   * @param x position
+   * @param y position
+   * @param color 
+   **/
+  protected void addChip(int x, int y, int color) {}
+
+  /**
+   * Moves a chip from (x2,y2) to (x1,y1) and sets (x2,y2) to empty. Does not
+   * check for legality of the move becuase the doMove method does. 
+   * @param x1 new x position
+   * @param y1 new y position
+   * @param x2 old x position
+   * @param y2 old y position
+   **/
+  protected void moveChip(int x1, int y1, int x2, int y2) {}
+
+  /**
+   * Returns true if a black chip is in the bottom win zone, or if 
+   * a white chip is in its right win zone. 
+   * @param x position
+   * @param y position
+   * @return true if there is a chip in the win zone, false otherwise
+   **/
+  protected boolean chipInWinZone(int x, int y) {}
+
+  /**
+   * Returns true if a black chip its in its top win zone, or if
+   * a white chip is in its left win zone. 
+   * @param x position
+   * @param y position
+   * @return true if there is a chip in the win zone, false otherwise
+   **/
+  protected boolean chipInWinZone0(int x, int y) {}
+
+  /**
+   * Takes in a position (x,y) and changes that coordinate into a 
+   * specific index on the board.
+   * @param x position
+   * @param y position
+   * @return index integer
+   **/
+  protected int index(int x, int y) {}
+
+
+2. Doing a legal move, Board.java, Justin
+To choose a move, the Machine Player uses the isLegalMove() 
+method in the Board class. The isLegalMove method checks for all illegal moves, 
+takes in a Move parameter and a color parameter, and returns false if the input
+move is illegal for the given color. The chooseMove function then looks at the board
+using alpha beta search, according to a certain search depth, to choose the most
+effective move to win.
+  
+  methods:     
+  /**
+   * Returns the number of neighbors of a position (x,y) 
+   * @param x position
+   * @param y position
+   * @return int value of number of same color neighbors
+   **/
+  protected int sameNeighbors(int x, int y, int color) {}
+
+  /**
+   * Considers all the rules for a legal move. Takes in a move object and a color, returns
+   * true if given move is legal for the given color. 
+   * @param move the move the color wants to make
+   * @param color of the chip
+   * @return true if the move is legal
+   **/
+  protected boolean isLegalMove(Move move, int color) {
+    // Rule 1: No chip may be placed in any of the four corners. 
+    // Rule 2: No chip may be placed in a goal of the opposite color.
+    // Rule 3: No chip may be placed in a square that is already occupied.
+    // Rule 4: A player may not have more than two chips in a connected group, whether
+    //         for the chip you place or for the neighboring chips.
+    // Continuation of Rule 4: A player may not place a chip down that defies
+    // rule 4 for any of the neighboring chips. 
+  }
+
+
+3. Finding networks, and connections, Board.java, Alex
+
+  methods:
+  /**
+   * Returns an integer array of length 3 of each direction away from a position (x,y). Goes
+   * through each direction and puts the int value of the first chip it sees that isn't 
+   * EMPTY in index 0 of the array. Index 1 of the array is the x value of that chip, index 2
+   * of that array is the y value of that chip.
+   * @param x position
+   * @param y position
+   * @return int[] of [integer of chip color, x value, y value]
+   **/
+  protected int[] clockwiseDiagnols(int x, int y, int direction) {}
+
+  /**
+   * Checks an index of already visited spots and looks for a chip in it. Returns
+   * true if the spot given to the method is already visited. 
+   * @param x position
+   * @param y position
+   * @param exceptions is an integer array of spaces already visited
+   * @param spot is the index in question
+   * @return true if the spot has been visited
+   **/
+  protected boolean inIndex(int x, int y, int[] exceptions, int spot) {}
+
+  /**
+   * Returns true if there is a valid network for a color. The function takes in 
+   * a lastDir parameter so that it will not check for another chip in the same
+   * direction it came from. This method runs recursively on the board through
+   * each position on the board to find a network. If it finds another chip of 
+   * the same color, it will recursively call network again on that position, 
+   * and go in a different direction looking for another chip of the same color.
+   * If the count reaches six, and the first and last chips are in the win zone, 
+   * then it will return true.
+   * @param x position
+   * @param y position
+   * @param color 
+   * @param lastDir is the last direction that the network came from
+   * @param visited is an int array of already visited position
+   * @param count is the length of the network
+   * @param spot is the number of spots to view in the array.
+   * @return true if there is a valid network for a color, false otherwise
+   **/
+  protected boolean network(int x, int y, int color, int lastDir, int[] visited, int count, int spot) {}
+
+  /** 
+   * This method returns true if there is a winning network for a given
+   * color. It checks if there is a winning network for white by 
+   * calling network on each of the chips in its win zone on the left
+   * of the board. It checks if there is a winning network for black 
+   * by calling network on each of the chips in its win zone on the 
+   * top of the board. 
+   * @param color
+   * @return true if there is a winning network for the color
+   **/
+  protected boolean winNetwork (int color) {}
+
+
+4. Picking a effective move, Board.java, MachinePlayer.java, Bola
+  
+  methods:
+  /**
+   * Evaluates the winning chances of a board for a given color. First it checks 
+   * to see if its a winning board for it, or its opponent. If there isn't a winning
+   * network, then the board is given a score based on the chances of a possible
+   * winning network. It will give a high value score if the given color has a good
+   * chance of winning, it will give a negative value score if the opponent has a better
+   * chance of winning. 
+   * @param color that we want to give a score to
+   * @return int score
+   **/
+  protected int eval(int color) {}
+
+  /**
+   * This evaluates the max for minimax tree search, using alpha-beta pruning.
+   * @param board 
+   * @param alpha
+   * @param beta
+   * @param depth
+   * @return the best move available to this player
+   **/
+  protected Best maxValue(Board board, int alpha, int beta, int depth){}
+
+  /**
+   * This evaluates the min for minimax tree search, using alpha-beta pruning.
+   * @param board 
+   * @param alpha
+   * @param beta
+   * @param depth
+   * @return the best move available to this player
+   **/
+  protected Best minValue(Board board, int alpha, int beta, int depth){}
+
+  /**
+   * Returns a DList of every possible move for a given color. 
+   * @param color 
+   * @return DList of all possible moves
+   **/
+  protected DList allPossibleMoves(int color) {}
+
+  /**
+   * Do move performs a move on the board. It returns true if the move is legal,
+   * false otherwise.
+   * @param move in question
+   * @param color of the chip being added or moved
+   * @return true if the move is legal, false otherwise
+   **/
+  protected boolean doMove(Move m, int color) {}
+
+  /**
+   * Undoes a move. If it was an add move, it sets the spot in that move to 
+   * empty. It it was a step move, it moves the chip back to its old spot. 
+   * @param move in question
+   * @param color of the chip that was moved
+   **/
+  protected void undoMove(Move m, int color) {}
+
+  /**
+   * Goes through every chip on the board and returns the number of connections it has 
+   * with chips of its same color. Returns the number of connections, divided by 2 to 
+   * account for overcounting connections.
+   * @param color
+   * @return integer of the number of connections
+   **/
+  protected int numConnections(int color) {}
+
+  /**
+   * Takes in a color and returns the instance variable that represents that 
+   * color's longest network.
+   * @param color
+   * @return instance variable for longest network for the given color
+   **/
+  protected int longestNetwork (int color) {}
+
+
+
+Work done by each team member:
+Justin: isLegalMove() method. First it checks to see whether a given color has already placed all 10 of its chips. Next it makes sure that the chip will not be in a corner space, or else it will return false. It will return false also if the player is trying to put a chip into the goal zone of its opponent, this will cause it to return false. Rule 3, no chip may be placed in a space that is already taken. The last rule checks for neighbors. First, it looks at at the neighbors of the space in question and makes sure it doesn't have more than one neighbor of the same chip color. Next, it checks the neighbors of each of the neighbors, making sure that the move in question will not make an illegal board because of one of the neighboring chips. I also implemented the Board class that creates an 2 dimensional array object that represents the Board.
+
+Alex: network module. My network function starts at a position and checks every first diagnol around that, calls network recursively on that spot, and so on. It passes itself a table of already-visited spots and records the direction that the network moves in to avoid not turning a corner and returning to a point. It also passes itself a count of how many chips are in a row in the network and if the network completes in a win zone with a network of 6 or more, it returns true. The win network function tests network on each chip in a win zone and returns which color won. For an evaluation function, the network function also records, if the network isn't complete, the longest chain of chips on the board. 
+
+Bola: minimax algorithm with alpha-beta pruning and evaluation function. My evaluation function runs on a given color. It checks that there are chips in each end zone, the longest network, and the number of connections for a both colors and return appropriate weighted sum based on the color for which it wants to return. It uses alpha-beta pruning to pick the best move to do.
+
+
+This is a truthful statement of how we divided the labor for
+this project.
+
+
+
+
+
+______________________________________________________
+Justin MacMillin
+
+
+
+
+
+______________________________________________________
+Bola Malek
+
+
+
+
+
+______________________________________________________
+Alex McGourty

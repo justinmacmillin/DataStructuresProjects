@@ -1,0 +1,538 @@
+                                     GRADER
+
+Name of student running submit: Justin MacMillin
+Login of student running submit: aq
+
+Second team member's name: Alex McGourty
+Second team member's login: cc
+
+Third team member's name (if any): Kuhuk Goyal
+Third team member's login: mo
+
+===============================================================================
+Our program compiles without errors, and we have tested it on the lab machines. Warning: We have three different hash table classes, all with slightly different implementations but they all use the same methods. They are all included in this file.
+
+Division of work:
+Alex:
+For remove vertex, two while loops run one after the other (not nested) that have length d to make sure the list of edges connected with the vertex (size d) are removed (which takes O(1) time) and then the list of vertexes connected by the edges no longer lists the vertex being removed (which takes O(1) time). The vertex is then removed from the hashtable, which takes O(1) time (the table resizes). d + d + 1 = 2d + 1 belongs to O(d). For getVertices(), we simply keep a list of vertices in the class which takes O(V) time to go through all the vertices and add them into an array spot.
+
+Justin:
+I implemented ListSorts and KruskalTable for Kruskal's algorithm. The Kruskal table is implemented with an array of DLists, similar to the VertexTable. We needed a separate hash table for Kruskal's algorithm because we needed to keep track of connected edges and vertices in the same table, in order to properly union them or not within the minSpanTree method. For ListSorts, I used the homework as a frame and changed it slightly to account for sorting edges by their weight and ensuring that no two edges were in the Kruskal Table after it is sorted.
+
+Kuhuk:
+I implemented Kruskal's algorithm. Initially there is a method to copy the input graph for minSpanTree without losing any of the parts of that graph or ruining references. There is a method that makes a Kruskal Dictionary from an array of vertex Objects. There is a method that makes a list of edges in the required time from the get neighbors method in WUGraph. The minSpanTree method first copies the input graph, makes a Kruskal table of vertices (O(V) time) and a list of edges. It then sorts the edges by weight (Elog(E) time) and makes a disjoint sets object with the number of elements equal to the length of the edge list. While the edge list isn't empty, I look at the origin and destination of each item in the Kruskal table and as long as the origin and destination are not the same, add that edge to the new graph and union the sets. When the while loop is finished I return the minimum spanning tree.
+
+
+
+Implementations:
+
+Edge package: Alex
+Entry.java
+
+Edge.java
+	/**
+	 * Creates an edge object between two vertices.
+	 * @param vertex one
+	 * @param vertex two
+	 * @param weight of the edge
+	 **/
+	public Edge(Vertex v1, Vertex v2, int weight)
+
+	/**
+	 * This method ensures that no two edges will have the same hashcode.
+	 * @return int hashcode
+	 **/
+	public int hashCode()
+
+	/** 
+	 * Returns true if the two objects are the same.
+	 * @param v1
+	 * @param v2
+	 * @return true or false
+	 **/
+	public boolean isSame(Object v1, Object v2)
+
+	/**
+	 * Provides a way to access instance variable v1 from outside edge package.
+	 * @return v1
+	 **/	
+	public Vertex getV1()
+
+	/**
+	 * Provides a way to set instance variable v1 from outside edge package.
+	 * @param v1 is the new v1
+	 **/
+	public void setV1(Vertex v1)
+
+	/**
+	 * Provides a way to access instance variable v2 from outside edge package.
+	 * @return v2
+	 **/
+	public Vertex getV2()
+
+	/**
+	 * Provides a way to set instance variable v2 from outside edge package.
+	 * @param v2 is the new v2
+	 **/
+	public void setV2(Vertex v2)
+
+	/**
+	 * Provides a way to access the instance variable weight from outside edge package.
+	 * @return integer weight
+	 **/
+	public int getWeight()
+
+	/**
+	 * Provides a way to set instance variable weight from outside graph package.
+	 * @param weight is the new weight
+	 **/
+	public void setWeight(int weight)
+
+	/**
+	 * Provides a way to set instance variable weight from outside graph package.
+	 * @param weight is the new weight
+	 **/
+	public void setWeight(int weight)
+
+	/**
+	 * Checks if two Edge objects are the same.
+	 * @
+	 **/
+	public boolean equals(Object i)
+
+	/**
+	 * Overrides the comparable method compareTo. Used in ListSorts for sorting edges in a queue.
+	 * @param Object i, we used edge objects.
+	 * @return int of normal compareTo function.
+	 **/
+	@Override
+	public int compareTo(Object i)
+
+EdgeTable.java
+	/** 
+  	 *  Construct a new empty  edge table intended to hold roughly sizeEstimate
+  	 *  entries.
+    	 **/
+  	public EdgeTable(int sizeEstimate)
+
+	/** 
+   	 * Construct a new empty hash table with a default size.
+  	 **/
+  	public EdgeTable()
+
+	/**
+	 *  Converts a hash code in the range Integer.MIN_VALUE...Integer.MAX_VALUE
+	 *  to a value in the range 0...(size of hash table) - 1.
+	 *
+   	 *  This function should have package protection (so we can test it), and
+   	 *  should be used by insert, find, and remove.
+   	 **/
+  	int compFunction(int code)
+
+	/**
+         * Returns true if the number is a prime.
+   	 * @param number
+	 * @return true if prime
+   	 **/
+	boolean prime (int num)
+
+	/** 
+         *  Returns the number of entries stored in the dictionary.  Entries with
+   	 *  the same key (or even the same key and value) each still count as
+   	 *  a separate entry.
+   	 *  @return number of entries in the dictionary.
+   	 **/
+  	public int size()
+
+	/** 
+   	 *  Tests if the dictionary is empty.
+   	 *
+   	 *  @return true if the dictionary has no entries; false otherwise.
+   	 **/
+  	public boolean isEmpty()
+
+	/**
+   	 * Resizes the table only if the load factor is less than 0.25 or 1.
+   	 * @return resized EdgeTable
+   	 **/
+  	public EdgeTable resize()
+
+	/**
+   	 *  Create a new Edge object referencing the input key and associated value,
+   	 *  and insert the entry into the dictionary.  Return a reference to the new
+   	 *  entry.  Multiple entries with the same key (or even the same key and
+   	 *  value) can coexist in the dictionary.
+   	 *
+   	 *  This method should run in O(1) time if the number of collisions is small.
+  	 *
+  	 *  @param key the key by which the entry can be retrieved.
+  	 *  @param value an arbitrary object.
+  	 *  @return an entry containing the key and value.
+  	 **/
+  	public Edge insert(Edge e)
+
+	/** 
+   	 *  Search for an entry with the specified key.  If such an entry is found,
+  	 *  return it; otherwise return null.  If several entries have the specified
+  	 *  key, choose one arbitrarily and return it.
+  	 *
+  	 *  This method should run in O(1) time if the number of collisions is small.
+  	 *
+  	 *  @param key the search key.
+  	 *  @return an entry containing the key and an associated value, or null if
+  	 *          no entry contains the specified key.
+  	 **/
+  	public Edge find(Object v1, Object v2)
+
+	/** 
+  	 *  Remove an entry with the specified key.  If such an entry is found,
+  	 *  remove it from the table and return it; otherwise return null.
+  	 *  If several entries have the specified key, choose one arbitrarily, then
+  	 *  remove and return it.
+  	 *
+  	 *  This method should run in O(1) time if the number of collisions is small.
+  	 *
+  	 *  @param key the search key.
+  	 *  @return an entry containing the key and an associated value, or null if
+  	 *          no entry contains the specified key.
+   	 **/
+ 	 public Edge remove(Object v1, Object v2)
+
+	/**
+  	 *  Remove all entries from the dictionary.
+  	 */
+  	public void makeEmpty()
+
+Graph package: Alex
+Vertex.java
+	/** 
+	 * Creates a null Vertex object.
+	 **/
+	Vertex()
+
+	/** 
+	 * Creates a vertex object given a vertex parameter.
+	 **/
+	Vertex (Object vertex) 
+
+	/** 
+	 * Provides a way to access a vertex from outside graph package.
+	 * @return vertex object
+	 **/
+	public Object getVertex()
+
+	/** 
+	 * Provides a way to set a vertex object from outside the graph package.
+	 * @param vertex object
+	 **/
+	public void setVertex(Object vertex)
+
+	/**
+	 * Adds a neighbor to a vertex.
+	 * @param object to add
+	 **/
+	public void addNeighbor(Object vertex)
+
+	/**
+	 * Removes a neighbor from a vertex.
+	 * @param object to remove
+	 **/
+	public void removeNeighbor(Object vertex)
+
+	/**
+	 * Returns a string representation of the Vertex.
+	 * @return String
+	 **/
+	public String toString()
+
+	/** 
+	 * Returns hash code for a Vertex object.
+	 * @return hash code
+	 **/
+	public int hashCode()
+
+	/** 
+	 * Returns true if this equals the given object.
+	 * @return true if they are .equals()
+	 **/
+	public boolean equals(Object i)
+
+VertexTable.java
+	/** 
+  	 *  Construct a new empty vertex table intended to hold roughly sizeEstimate
+  	 *  entries.
+  	 **/
+ 	public VertexTable(int sizeEstimate)
+
+	/** 
+  	 *  Construct a new empty hash table with a default size.
+  	 **/
+  	public VertexTable()
+
+	/**
+  	 *  Converts a hash code in the range Integer.MIN_VALUE...Integer.MAX_VALUE
+  	 *  to a value in the range 0...(size of hash table) - 1.
+  	 *
+  	 *  This function should have package protection (so we can test it), and
+  	 *  should be used by insert, find, and remove.
+  	 **/
+  	int compFunction(int code)
+
+	/**
+  	 * Returns true if the number is a prime.
+  	 * @param number
+  	 * @return true if prime
+  	 **/
+	boolean prime (int num)	
+
+	/** 
+  	 *  Returns the number of entries stored in the dictionary.  Entries with
+  	 *  the same key (or even the same key and value) each still count as
+  	 *  a separate entry.
+  	 *  @return number of entries in the dictionary.
+  	 **/
+  	public int size()
+
+	/** 
+  	 *  Tests if the dictionary is empty.
+  	 *
+  	 *  @return true if the dictionary has no entries; false otherwise.
+  	 **/
+  	public boolean isEmpty()
+
+	/**
+  	 * Resizes the table only if the load factor is less than 0.25 or 1.
+  	 * @return resized EdgeTable
+  	 **/
+  	public VertexTable resize()
+
+	/**
+  	 *  Create a new Vertex object referencing the input key and associated value,
+  	 *  and insert the entry into the dictionary.  Return a reference to the new
+  	 *  entry.  Multiple entries with the same key (or even the same key and
+  	 *  value) can coexist in the dictionary.
+  	 *
+  	 *  This method should run in O(1) time if the number of collisions is small.
+  	 *
+  	 *  @param key the key by which the entry can be retrieved.
+  	 *  @param value an arbitrary object.
+  	 *  @return an entry containing the key and value.
+  	 **/
+  	public Vertex insert(Vertex v)
+
+	/** 
+  	 *  Search for an entry with the specified key.  If such an entry is found,
+  	 *  return it; otherwise return null.  If several entries have the specified
+  	 *  key, choose one arbitrarily and return it.
+  	 *
+  	 *  This method should run in O(1) time if the number of collisions is small.
+  	 *
+  	 *  @param key the search key.
+  	 *  @return an entry containing the key and an associated value, or null if
+  	 *          no entry contains the specified key.
+  	 **/
+  	public Vertex find(Object vertex)
+
+	/** 
+  	 *  Remove an entry with the specified key.  If such an entry is found,
+  	 *  remove it from the table and return it; otherwise return null.
+  	 *  If several entries have the specified key, choose one arbitrarily, then
+  	 *  remove and return it.
+  	 *
+  	 *  This method should run in O(1) time if the number of collisions is small.
+  	 *
+  	 *  @param key the search key.
+  	 *  @return an entry containing the key and an associated value, or null if
+  	 *          no entry contains the specified key.
+  	 */
+  	public Vertex remove(Object vertex)
+
+	/**
+  	 *  Remove all entries from the dictionary.
+  	 */
+  	public void makeEmpty()
+
+
+Linked package: Kuhuk
+DList, DListNode, InvalidNodeException, List, ListNode, SList, SListNode.
+These classes were used in the homework.
+
+List package: Justin
+LinkedQueue, Queue, QueueEmptyException, SListNode.
+These classes were used in the homework.
+
+Classes outside packages: Kuhuk & Justin
+Kruskal.java: Kuhuk
+	/**
+  	 * minSpanTree() returns a WUGraph that represents the minimum spanning tree
+  	 * of the WUGraph g.  The original WUGraph g is NOT changed.
+  	 */
+ 	public static WUGraph minSpanTree(WUGraph g)
+
+	/**
+  	 * This method makes a dictionary out of a sorted linked queue input.
+  	 * @param sorted linked queue
+  	 * @return EdgeTable
+  	 **/
+  	public static KruskalTable makeVtxDictionary(Object[] vList)
+
+	/**
+  	 * edgeList creates a queue of all edges from an input graph.
+  	 * @param WUGraph
+  	 * @return linked queue of edges
+  	 **/
+  	public static LinkedQueue edgeList(WUGraph g)
+
+	/**
+  	 * Duplicates a graph, without copying the reference.
+  	 * @param g is the WUGraph we want to duplicate
+  	 * @return new WUGraph
+  	 *
+  	 * Performance: runs in O(|V|) time.
+  	 **/
+  	public static WUGraph vClone(WUGraph g)
+
+KruskalTable.java: Justin
+	/** 
+  	 *  Construct a new empty Kruskal hash table intended to hold roughly sizeEstimate
+  	 *  entries.
+  	 **/
+  	public KruskalTable(int sizeEstimate)
+
+	/** 
+  	 *  Construct a new empty hash table with a default size.
+  	 **/
+  	public KruskalTable()
+
+	/**
+  	 *  Converts a hash code in the range Integer.MIN_VALUE...Integer.MAX_VALUE
+  	 *  to a value in the range 0...(size of hash table) - 1.
+  	 *
+  	 *  This function should have package protection (so we can test it), and
+  	 *  should be used by insert, find, and remove.
+  	 **/
+  	int compFunction(int code)
+
+	/**
+  	 * Returns true if the number is a prime.
+  	 * @param number
+  	 * @return true if prime
+  	 **/
+	boolean prime (int num)
+
+	/** 
+  	 *  Returns the number of entries stored in the dictionary.  Entries with
+  	 *  the same key (or even the same key and value) each still count as
+  	 *  a separate entry.
+  	 *  @return number of entries in the dictionary.
+  	 **/
+  	public int size()
+
+	/** 
+  	 *  Tests if the dictionary is empty.
+  	 *
+  	 *  @return true if the dictionary has no entries; false otherwise.
+  	 **/
+  	public boolean isEmpty()
+
+	/**
+  	 * Resizes the table only if the load factor is less than 0.25 or 1.
+  	 * @return resized EdgeTable
+  	 **/
+  	public KruskalTable resize()
+
+	/**
+  	 *  Create a new Vertex object referencing the input key and associated value,
+  	 *  and insert the entry into the dictionary.  Return a reference to the new
+  	 *  entry.  Multiple entries with the same key (or even the same key and
+  	 *  value) can coexist in the dictionary.
+  	 *
+  	 *  This method should run in O(1) time if the number of collisions is small.
+  	 *
+  	 *  @param key the key by which the entry can be retrieved.
+  	 *  @param value an arbitrary object.
+  	 *  @return an entry containing the key and value.
+  	 **/
+  	public Entry insert(Vertex v, Object value)
+
+	/**
+  	 * Inserts an Entry vertex object.
+  	 * @param vertex to insert
+  	 * @return entry object inserted.
+  	 **/
+  	public Entry insert(Vertex v)
+
+	/** 
+  	 *  Search for an entry with the specified key.  If such an entry is found,
+  	 *  return it; otherwise return null.  If several entries have the specified
+  	 *  key, choose one arbitrarily and return it.
+  	 *
+  	 *  This method should run in O(1) time if the number of collisions is small.
+  	 *
+  	 *  @param key the search key.
+  	 *  @return an entry containing the key and an associated value, or null if
+  	 *          no entry contains the specified key.
+  	 **/
+  	public Entry find(Object vertex)
+
+	/** 
+  	 *  Remove an entry with the specified key.  If such an entry is found,
+  	 *  remove it from the table and return it; otherwise return null.
+  	 *  If several entries have the specified key, choose one arbitrarily, then
+  	 *  remove and return it.
+  	 *
+  	 *  This method should run in O(1) time if the number of collisions is small.
+  	 *
+  	 *  @param key the search key.
+  	 *  @return an entry containing the key and an associated value, or null if
+  	 *          no entry contains the specified key.
+  	 */
+  	public Vertex remove(Object vertex)
+
+	/**
+  	 *  Remove all entries from the dictionary.
+  	 */
+  	public void makeEmpty()
+
+ListSorts.java: Justin
+Some of the methods are slightly changed from the homework, tailored to what we needed for Kruskal's algorithm. 
+	/**
+  	 *  makeQueueOfQueues() makes a queue of queues, each containing one item
+  	 *  of q.  Upon completion of this method, q is empty.
+  	 *  @param q is a LinkedQueue of objects.
+  	 *  @return a LinkedQueue containing LinkedQueue objects, each of which
+  	 *    contains one object from q.
+  	 **/
+  	public static LinkedQueue makeQueueOfQueues(LinkedQueue q)
+
+	/**
+  	 * Changed the implementation of MergeSortedQueues so that it would handle edges.
+  	 * This method also makes sure that no two same edges are added.
+  	 * @param linked queue 1
+  	 * @param linked queue 2
+  	 * @return sorted linked queue
+  	 **/
+  	public static LinkedQueue noEQMergeSortedQueues(LinkedQueue q1, LinkedQueue q2)
+
+	/**
+  	 *  partition() partitions qIn using the pivot item.  On completion of
+  	 *  this method, qIn is empty, and its items have been moved to qSmall,
+  	 *  qEquals, and qLarge, according to their relationship to the pivot.
+  	 *  @param qIn is a LinkedQueue of Comparable objects.
+  	 *  @param pivot is a Comparable item used for partitioning.
+  	 *  @param qSmall is a LinkedQueue, in which all items less than pivot
+  	 *    will be enqueued.
+  	 *  @param qEquals is a LinkedQueue, in which all items equal to the pivot
+  	 *    will be enqueued.
+  	 *  @param qLarge is a LinkedQueue, in which all items greater than pivot
+  	 *    will be enqueued.  
+  	 **/   
+  	public static void partition(LinkedQueue qIn, Comparable pivot, LinkedQueue qSmall, 
+				     LinkedQueue qEquals, LinkedQueue qLarge)
+
+	/**
+  	 *  mergeSort() sorts q from smallest to largest using mergesort.
+  	 *  @param q is a LinkedQueue of Comparable objects.
+  	 **/
+  	public static void noEQMergeSort(LinkedQueue q)
+
