@@ -1,7 +1,7 @@
 DataStructuresProjects
 ======================
 
-Folder of projects done in Computer Science 61B, "Data Structures"
+Projects done in Computer Science 61B, "Data Structures"
 
 Project 1 - Individual project. Simulate an ocean containing sharks and fish. View Ocean.java for shark/fish implementation and RunLengthEncoding.java for viewing ocean implementation.
 
